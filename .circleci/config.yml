@@ -1,0 +1,43 @@
+version: 2.1
+
+executors:
+  docker-executor:
+    docker:
+      - image: cimg/python:3.12
+
+jobs:
+  bludflo:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: "BludFlo Welcom Note!"
+          command: echo "Welcome to the BludFlo CI/CD pipeline!"
+  
+  build-and-push-docker:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker Image
+          command: |
+            docker build -t edguillen/bludflo:latest .
+      - run:
+          name: Authenticate to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      - run:
+          name: Push Docker Image
+          command: |
+            docker push edguillen/bludflo:latest
+
+workflows:
+  expense-pal-workflow: # Name of the workflow
+    # Inside the workflow, declare jobs to run 
+    jobs:
+      - bludflo
+      - build-and-push-docker:
+          requires:
+            - bludflo
