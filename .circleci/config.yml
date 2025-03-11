@@ -38,6 +38,6 @@ workflows:
     # Inside the workflow, declare jobs to run 
     jobs:
       - bludflo
-      - build-and-push-docker:
-          requires:
-            - bludflo
+      #- build-and-push-docker:
+      #    requires:
+      #      - bludflo
